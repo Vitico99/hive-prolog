@@ -41,10 +41,3 @@ init(P1, P2):-
     assert(playable(0,0)),
     assert(first(P1)),
     assert(first(P2)).
-
-
-
-
-
-
-
