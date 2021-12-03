@@ -2,6 +2,7 @@
 
 :- dynamic bug/5. % bug(Player, Type of Bug, X pos, Y pos, Stack pos)
 :- dynamic placeable/2. %placeable(X,Y): can place a new bug on cell X,Y
+:- dynamic visited/2. % Check if cell(X,Y) has been visited by dfs
 
 init_board():-
     assert(placeable(0,0)).
@@ -46,3 +47,21 @@ removeBug(X,Y):- % Remove Position X,Y. Assumes there is only one bug in cell.
     forall(isolatedEmptyAdyacent(X,Y,X1,Y1), retract(placeable(X1,Y1))),
     retract(Bug),
     assert(placeable(X,Y)).
+
+
+isBoardConnected():- \+bug(_,_,_,_,_), !.
+isBoardConnected():-
+    bug(_,_,X,Y,_),
+    !,
+    forall(visited(X1,Y1), retract(visited(X1,Y1))),
+    isBoardConnected(X,Y).
+isBoardConnected(X,Y):-
+    assert(visited(X,Y)),
+    forall(toVisit(X,Y,X2,Y2), isBoardConnected(X2,Y2)),
+    findall([X3,Y3], visited(X3,Y3), AllVisited),
+    findall([X4,Y4], bug(_,_,X4,Y4,0), NonEmptyCells ),
+    same_length(AllVisited, NonEmptyCells).
+    
+toVisit(X,Y, X1,Y1):-
+    nonEmptyAdyacent(X,Y,X1,Y1),
+    \+visited(X1,Y1).
