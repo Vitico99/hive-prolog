@@ -23,6 +23,10 @@ nonEmptyAdyacent(X,Y, X1, Y1):-
     adyacent(X,Y,X1,Y1), 
     \+empty(X1,Y1).
 
+placeableAdyacent(X1, Y1, X2, Y2):-
+    adyacent(X1, Y1, X2, Y2),
+    placeable(X2, Y2).
+
 isIsolated(X,Y):-
     findall([X1,Y1],nonEmptyAdyacent(X,Y, X1,Y1),L),
     length(L, 1).
